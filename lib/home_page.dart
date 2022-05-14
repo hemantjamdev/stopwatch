@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+
+import 'ad_helper.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -68,159 +71,172 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: NeumorphicAppBar(
-          title: NeumorphicText(title,
-              textStyle: NeumorphicTextStyle(fontSize: 26),
-              style: const NeumorphicStyle(color: activeColor)),
-          centerTitle: true),
-      body: SafeArea(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Neumorphic(
-                style: buttonStyle,
-                child: Container(
-                  margin: const EdgeInsets.all(10),
-                  height: 250,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                        color: stopwatch.isRunning ? activeColor : disableColor,
-                        width: 4),
-                  ),
-                  alignment: Alignment.center,
-                  child: StreamBuilder<Object>(
-                    initialData: initialData,
-                    stream: controller.stream,
-                    builder: (context, snapshot) {
-                      return Text(
-                        snapshot.data.toString(),
-                        style: TextStyle(
-                            fontSize: 40,
-                            color: stopwatch.isRunning
-                                ? activeColor
-                                : disableColor),
-                      );
-                    }, 
-                  ),
-                ),
-              ),
-              Neumorphic(
-                style: const NeumorphicStyle(
-                  depth: 8,
-                  oppositeShadowLightSource: false,
-                  intensity: 8,
-                  shape: NeumorphicShape.concave,
-                ),
-                margin: const EdgeInsets.all(18),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(
-                    height: 200,
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            const Icon(Icons.flag),
-                            NeumorphicText(
-                              " TARGETS",
-                              textStyle: NeumorphicTextStyle(
-                                fontSize: 18,
-                              ),
-                              style: const NeumorphicStyle(color: activeColor),
-                            ),
-                            Flexible(
-                              child: Container(
-                                alignment: Alignment.topRight,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(
-                                      () {
-                                        targetList.clear();
-                                      },
-                                    );
-                                  },
-                                  child: const Icon(Icons.delete, size: 20),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        targetList.isNotEmpty
-                            ? Expanded(
-                                child: Scrollbar(
-                                  isAlwaysShown: true,
-                                  child: ListView.builder(
-                                    itemCount: targetList.length,
-                                    itemBuilder: (context, int index) {
-                                      return Padding(
-                                        padding: const EdgeInsets.all(5),
-                                        child: Text(
-                                            "#${index + 1}    ${targetList[index]}"),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              )
-                            : const Expanded(
-                                child: Center(
-                                  child: Text("No targets found !"),
-                                ),
-                              )
-                      ],
+        appBar: NeumorphicAppBar(
+            title: NeumorphicText(title,
+                textStyle: NeumorphicTextStyle(fontSize: 26),
+                style: const NeumorphicStyle(color: activeColor)),
+            centerTitle: true),
+        body: SafeArea(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child: Neumorphic(
+                    style: buttonStyle,
+                    child: Container(
+                      margin: const EdgeInsets.all(10),
+                   //   height: 200,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                            color:
+                                stopwatch.isRunning ? activeColor : disableColor,
+                            width: 4),
+                      ),
+                      alignment: Alignment.center,
+                      child: StreamBuilder<Object>(
+                        initialData: initialData,
+                        stream: controller.stream,
+                        builder: (context, snapshot) {
+                          return Text(
+                            snapshot.data.toString(),
+                            style: TextStyle(
+                                fontSize: 40,
+                                color: stopwatch.isRunning
+                                    ? activeColor
+                                    : disableColor),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  NeumorphicButton(
-                    style: buttonStyle,
-                    child: customIcon(icon: Icons.refresh),
-                    onPressed: () => stopwatch.reset(),
+                Neumorphic(
+                  style: const NeumorphicStyle(
+                    depth: 8,
+                    oppositeShadowLightSource: false,
+                    intensity: 8,
+                    shape: NeumorphicShape.concave,
                   ),
-                  NeumorphicButton(
-                    style: buttonStyle,
-                    child: customIcon(icon: Icons.flag),
-                    onPressed: () {
-                      setState(
-                        () {
-                          if (stopwatch.isRunning) {
-                            var milli = stopwatch.elapsed.inMilliseconds;
-                            String millisecond =
-                                (milli % 1000).toString().padLeft(3, "0");
-                            String second = ((milli ~/ 1000) % 60)
-                                .toString()
-                                .padLeft(2, "0");
-                            String minutes = ((milli ~/ 1000) ~/ 60)
-                                .toString()
-                                .padLeft(2, "0");
-                            String value = "$minutes:$second:$millisecond";
-                            targetList.add(value);
-                          }
-                        },
-                      );
-                    },
+                  margin: const EdgeInsets.all(18),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      height: 200,
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              const Icon(Icons.flag),
+                              NeumorphicText(
+                                " TARGETS",
+                                textStyle: NeumorphicTextStyle(
+                                  fontSize: 18,
+                                ),
+                                style:
+                                    const NeumorphicStyle(color: activeColor),
+                              ),
+                              Flexible(
+                                child: Container(
+                                  alignment: Alignment.topRight,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(
+                                        () {
+                                          targetList.clear();
+                                        },
+                                      );
+                                    },
+                                    child: const Icon(Icons.delete, size: 20),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          targetList.isNotEmpty
+                              ? Expanded(
+                                  child: Scrollbar(
+                                    isAlwaysShown: true,
+                                    child: ListView.builder(
+                                      itemCount: targetList.length,
+                                      itemBuilder: (context, int index) {
+                                        return Padding(
+                                          padding: const EdgeInsets.all(5),
+                                          child: Text(
+                                              "#${index + 1}    ${targetList[index]}"),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                )
+                              : const Expanded(
+                                  child: Center(
+                                    child: Text("No targets found !"),
+                                  ),
+                                )
+                        ],
+                      ),
+                    ),
                   ),
-                  NeumorphicButton(
-                    style: buttonStyle,
-                    child: customIcon(
-                        icon: stopwatch.isRunning
-                            ? Icons.pause
-                            : Icons.play_arrow),
-                    onPressed: () {
-                      startStopWatch();
-                      setState(() {});
-                    },
-                  )
-                ],
-              )
-            ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    NeumorphicButton(
+                      style: buttonStyle,
+                      child: customIcon(icon: Icons.refresh),
+                      onPressed: () => stopwatch.reset(),
+                    ),
+                    NeumorphicButton(
+                      style: buttonStyle,
+                      child: customIcon(icon: Icons.flag),
+                      onPressed: () {
+                        setState(
+                          () {
+                            if (stopwatch.isRunning) {
+                              var milli = stopwatch.elapsed.inMilliseconds;
+                              String millisecond =
+                                  (milli % 1000).toString().padLeft(3, "0");
+                              String second = ((milli ~/ 1000) % 60)
+                                  .toString()
+                                  .padLeft(2, "0");
+                              String minutes = ((milli ~/ 1000) ~/ 60)
+                                  .toString()
+                                  .padLeft(2, "0");
+                              String value = "$minutes:$second:$millisecond";
+                              targetList.add(value);
+                            }
+                          },
+                        );
+                      },
+                    ),
+                    NeumorphicButton(
+                      style: buttonStyle,
+                      child: customIcon(
+                          icon: stopwatch.isRunning
+                              ? Icons.pause
+                              : Icons.play_arrow),
+                      onPressed: () {
+                        startStopWatch();
+                        setState(() {});
+                      },
+                    )
+                  ],
+                )
+              ],
+            ),
           ),
         ),
+        bottomNavigationBar: buildAdWidget());
+  }
+
+  Widget buildAdWidget() {
+    return SizedBox(
+      height: AdHelper.homepageAd.size.height.toDouble(),
+      child: AdWidget(
+        ad: AdHelper.homepageAd,
       ),
     );
   }
